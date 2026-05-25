@@ -14,9 +14,9 @@ const Home: React.FC = () => {
   const [analyzedFile, setAnalyzedFile] = useState<string>('');
 
   // New Features States
-  const [activeTab, setActiveTab] = useState<'resume' | 'linkedin'>('resume');
-  const [linkedinText, setLinkedinText] = useState('');
-  const [linkedinJd, setLinkedinJd] = useState('');
+  // const [activeTab, setActiveTab] = useState<'resume' | 'linkedin'>('resume');
+  // const [linkedinText, setLinkedinText] = useState('');
+  // const [linkedinJd, setLinkedinJd] = useState('');
   const [isPdfLoading, setIsPdfLoading] = useState(false);
 
   // Skill Gap Roadmap States
@@ -55,6 +55,7 @@ const Home: React.FC = () => {
   };
 
   // LinkedIn Paste analyzer submission handler
+  /*
   const handleLinkedInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!linkedinText.trim()) return;
@@ -78,6 +79,7 @@ const Home: React.FC = () => {
       setIsLoading(false);
     }
   };
+  */
 
   // PDF Report Downloader
   const handleDownloadPDF = async () => {
@@ -128,8 +130,8 @@ const Home: React.FC = () => {
     setAnalysis(null);
     setError(null);
     setAnalyzedFile('');
-    setLinkedinText('');
-    setLinkedinJd('');
+    // setLinkedinText('');
+    // setLinkedinJd('');
     setTargetRole('');
     setRoadmap(null);
     setShowRoleInput(false);
@@ -152,17 +154,18 @@ const Home: React.FC = () => {
             Optimize Your Resume for <span className="bg-gradient-to-r from-brand-400 to-indigo-400 bg-clip-text text-transparent">ATS Systems</span>
           </h1>
           <p className="text-slate-400 text-base sm:text-lg leading-relaxed">
-            Upload your resume in PDF format or paste your LinkedIn bio, match against a job description, and get instant detailed critiques.
+            Upload your resume in PDF format, match against a job description, and get instant detailed critiques.
           </p>
         </div>
       )}
 
-      {/* Tab Switcher (Only visible before scanning) */}
+      {/* Tab Switcher (Commented out) */}
+      {/*
       {!analysis && (
         <div className="flex justify-center space-x-2 max-w-xs mx-auto mb-2 bg-slate-900/60 p-1 rounded-2xl border border-slate-850">
           <button
             onClick={() => setActiveTab('resume')}
-            className={`flex-grow py-2 px-4 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-grow py-2 px-4 rounded-xl text-xs font-bold transition-all \${
               activeTab === 'resume'
                 ? 'bg-brand-600 text-white shadow-lg'
                 : 'text-slate-400 hover:text-white'
@@ -172,7 +175,7 @@ const Home: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('linkedin')}
-            className={`flex-grow py-2 px-4 rounded-xl text-xs font-bold transition-all ${
+            className={`flex-grow py-2 px-4 rounded-xl text-xs font-bold transition-all \${
               activeTab === 'linkedin'
                 ? 'bg-brand-600 text-white shadow-lg'
                 : 'text-slate-400 hover:text-white'
@@ -182,17 +185,19 @@ const Home: React.FC = () => {
           </button>
         </div>
       )}
+      */}
 
       {/* Main Form Area */}
       {!analysis && (
         <div className="max-w-4xl mx-auto">
           <div className="glass-panel p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-800">
+            <UploadZone onUpload={handleUpload} isLoading={isLoading} />
+            {/*
             {activeTab === 'resume' ? (
               <UploadZone onUpload={handleUpload} isLoading={isLoading} />
             ) : (
               <form onSubmit={handleLinkedInSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* LinkedIn Bio Textarea */}
                   <div className="rounded-2xl border border-slate-850 bg-slate-900/10 p-6 flex flex-col space-y-3 min-h-[300px]">
                     <label className="text-sm font-semibold tracking-wide text-slate-300">
                       LinkedIn About & Experience Text
@@ -208,7 +213,6 @@ const Home: React.FC = () => {
                     />
                   </div>
 
-                  {/* Target JD */}
                   <div className="rounded-2xl border border-slate-850 bg-slate-900/10 p-6 flex flex-col space-y-3">
                     <label className="text-sm font-semibold tracking-wide text-slate-300">
                       Target Job Description (Optional)
@@ -234,7 +238,7 @@ const Home: React.FC = () => {
                     <button
                       type="submit"
                       disabled={!linkedinText.trim()}
-                      className={`w-full max-w-sm flex items-center justify-center space-x-2 py-4 px-6 rounded-2xl font-semibold shadow-xl transition-all ${
+                      className={`w-full max-w-sm flex items-center justify-center space-x-2 py-4 px-6 rounded-2xl font-semibold shadow-xl transition-all \${
                         linkedinText.trim()
                           ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-brand-600/20 hover:from-brand-500 hover:to-indigo-500 hover:scale-[1.01]'
                           : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/20'
@@ -247,6 +251,7 @@ const Home: React.FC = () => {
                 </div>
               </form>
             )}
+            */}
           </div>
         </div>
       )}
