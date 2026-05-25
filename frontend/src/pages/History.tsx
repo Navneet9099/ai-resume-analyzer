@@ -7,6 +7,7 @@ import ScoreCard from '../components/ScoreCard';
 import KeywordTags from '../components/KeywordTags';
 import SuggestionList from '../components/SuggestionList';
 import { Calendar, ChevronDown, ChevronUp, Clock, FileText, Loader2, Award } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 const History: React.FC = () => {
   const [analyses, setAnalyses] = useState<ResumeAnalysis[]>([]);
@@ -17,7 +18,7 @@ const History: React.FC = () => {
   const { token } = useAuthStore();
   const navigate = useNavigate();
 
-  // Route Protection: If not logged in, navigate to /login
+  // Route Protection
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -67,13 +68,28 @@ const History: React.FC = () => {
     }
   };
 
-  // Helper to color code scores in small list indicators
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
     if (score >= 60) return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
     if (score >= 40) return 'text-orange-400 bg-orange-500/10 border-orange-500/20';
     return 'text-rose-400 bg-rose-500/10 border-rose-500/20';
   };
+
+  // Compile Recharts line chart data: Sort oldest to newest chronologically
+  const chartData = [...analyses]
+    .reverse()
+    .map(item => ({
+      name: new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      score: item.ats_score,
+      filename: item.filename,
+      date: new Date(item.created_at).toLocaleDateString()
+    }));
+
+  // Trending verification: Green if last score >= first score (trending upward/neutral)
+  const isTrendingUp = chartData.length > 1
+    ? chartData[chartData.length - 1].score >= chartData[0].score
+    : true;
+  const lineColor = isTrendingUp ? '#10b981' : '#f43f5e';
 
   if (isLoading) {
     return (
@@ -104,7 +120,51 @@ const History: React.FC = () => {
         </div>
       )}
 
-      {/* History Checklist */}
+      {/* Score History Recharts Line Graph */}
+      {analyses.length > 1 && (
+        <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl max-w-5xl mx-auto relative z-10">
+          <div className="flex items-center justify-between">
+            <h3 className="text-white font-extrabold text-sm tracking-wide uppercase">ATS Score Progress timeline</h3>
+            <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wider ${
+              isTrendingUp ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-rose-400 bg-rose-500/10 border-rose-500/20'
+            }`}>
+              {isTrendingUp ? '📈 Trending Upwards' : '📉 Trending Downwards'}
+            </span>
+          </div>
+          
+          <div className="h-64 w-full pt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1f293d" />
+                <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} />
+                <YAxis domain={[0, 100]} stroke="#64748b" fontSize={10} tickLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#0b0f19',
+                    border: '1px solid #1f293d',
+                    borderRadius: '12px',
+                    color: '#f8fafc',
+                    fontSize: '11px',
+                    fontFamily: 'Outfit, Inter, sans-serif'
+                  }}
+                  labelFormatter={(label) => `Date: ${label}`}
+                  formatter={(value, _name, props) => [`Score: ${value}/100`, `File: ${props.payload.filename}`]}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke={lineColor}
+                  strokeWidth={3}
+                  dot={{ r: 4, stroke: lineColor, strokeWidth: 2, fill: '#0b0f19' }}
+                  activeDot={{ r: 7, strokeWidth: 0, fill: lineColor }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* History Checklist List */}
       <div className="space-y-4 relative z-10">
         {analyses.length === 0 ? (
           <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-4 max-w-xl mx-auto">
@@ -163,7 +223,6 @@ const History: React.FC = () => {
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end space-x-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-800">
-                      {/* ATS Pill */}
                       <div className="flex items-center space-x-1.5">
                         <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">ATS Score</span>
                         <span className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${getScoreColor(item.ats_score)}`}>
@@ -171,7 +230,6 @@ const History: React.FC = () => {
                         </span>
                       </div>
 
-                      {/* JD Match Pill */}
                       {result.jd_match_score !== null && result.jd_match_score !== undefined && (
                         <div className="flex items-center space-x-1.5">
                           <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">JD Match</span>
@@ -181,7 +239,6 @@ const History: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Toggle Arrow */}
                       <div className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800/40">
                         {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                       </div>
@@ -191,7 +248,6 @@ const History: React.FC = () => {
                   {/* Expandable Dashboard */}
                   {isExpanded && (
                     <div className="p-6 border-t border-slate-850 bg-slate-950/20 space-y-8 animate-fadeIn">
-                      {/* Metric cards */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <ScoreCard
                           score={item.ats_score}
@@ -226,13 +282,11 @@ const History: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Keywords */}
                       <KeywordTags
                         foundKeywords={result.found_keywords}
                         missingKeywords={result.missing_keywords}
                       />
 
-                      {/* JD missing skills */}
                       {result.jd_missing_skills && result.jd_missing_skills.length > 0 && (
                         <div className="glass-panel border border-brand-500/10 p-6 rounded-2xl space-y-3 bg-slate-900/10">
                           <h3 className="text-brand-400 font-bold text-sm">Targeted JD Missing Skills</h3>
@@ -249,7 +303,6 @@ const History: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Strengths & Weaknesses suggestions */}
                       <SuggestionList
                         strengths={result.strengths}
                         weaknesses={result.weaknesses}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { Cpu, History, LogIn, LogOut, UserPlus, Zap } from 'lucide-react';
+import { Cpu, History, LogIn, LogOut, UserPlus, Zap, ArrowLeftRight, Sparkles } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { token, userEmail, logout } = useAuthStore();
@@ -42,6 +42,32 @@ const Navbar: React.FC = () => {
             <span>Analyzer</span>
           </Link>
 
+          {/* Comparison Page Link */}
+          <Link
+            to="/compare"
+            className={`flex items-center space-x-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              isActive('/compare')
+                ? 'bg-brand-500/10 text-brand-400 border border-brand-500/20'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
+            }`}
+          >
+            <ArrowLeftRight className="w-4 h-4" />
+            <span>Compare</span>
+          </Link>
+
+          {/* Cover Letter Page Link */}
+          <Link
+            to="/cover-letter"
+            className={`flex items-center space-x-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              isActive('/cover-letter')
+                ? 'bg-brand-500/10 text-brand-400 border border-brand-500/20'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
+            }`}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Cover Letter</span>
+          </Link>
+
           {token && (
             <Link
               to="/history"
@@ -67,7 +93,23 @@ const Navbar: React.FC = () => {
                 <span className="text-brand-400 font-medium">{userEmail}</span>
               </div>
               
-              {/* Mobile History Link (if logged in) */}
+              {/* Mobile Navigation Icons */}
+              <Link
+                to="/compare"
+                className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40"
+                title="Compare"
+              >
+                <ArrowLeftRight className="w-5 h-5" />
+              </Link>
+
+              <Link
+                to="/cover-letter"
+                className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40"
+                title="Cover Letter"
+              >
+                <Sparkles className="w-5 h-5" />
+              </Link>
+
               <Link
                 to="/history"
                 className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40"

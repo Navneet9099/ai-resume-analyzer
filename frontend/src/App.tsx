@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import History from './pages/History';
+import Compare from './pages/Compare';
+import CoverLetter from './pages/CoverLetter';
 import { useAuthStore } from './store/authStore';
 
 // Protected Route wrapper component
@@ -26,6 +28,11 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            
+            {/* New Advanced Features Routing */}
+            <Route path="/compare" element={<Compare />} />
+            <Route path="/cover-letter" element={<CoverLetter />} />
+
             <Route
               path="/history"
               element={
