@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: resume-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: resumedb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: resume-backend
+    restart: always
+    ports:
+      - "8000:8080"
+    env_file:
+      - ./backend/.env
+    environment:
+      # Override local Database URL to point to the named compose network DB service host 'db'
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/resumedb
+    depends_on:
+      - db
+
+  # React Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Client-side requests from host browser must target the mapped host port
+        - VITE_API_URL=http://localhost:8000
+    container_name: resume-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+    name: resume_analyzer_pgdata

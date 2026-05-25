@@ -1,0 +1,37 @@
+# Dependency Directories
+node_modules/
+dist/
+build/
+.svelte-kit/
+.next/
+
+# Python Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Local Database Files
+*.db
+*.sqlite
+resumedb.db
+local_resumedb.db
+
+# Local Secrets & API Configuration
+.env
+.env.local
+.env.*.local
+
+# System Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
