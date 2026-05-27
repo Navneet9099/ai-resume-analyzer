@@ -11,5 +11,4 @@ groq
 python-multipart
 email-validator
 reportlab
-
-
+psycopg2-binary
